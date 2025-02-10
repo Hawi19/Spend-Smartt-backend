@@ -40,7 +40,14 @@ const userSchema = mongoose.Schema(
        default: 0 },
        
     expenses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Expense" }],
+  
+      isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: { type: String },
   },
+
   {
     timestamps: true,
   }
