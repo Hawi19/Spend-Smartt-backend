@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 export const sendVerificationEmail = async (email, token) => {
-  const verificationLink = `http://localhost:5173/verify?token=${token}`;
+  const verificationLink = `https://spend-smart-frontend.vercel.app//verify?token=${token}`;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
