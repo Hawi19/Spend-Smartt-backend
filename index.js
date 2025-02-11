@@ -8,6 +8,10 @@ import userRoute from "./routes/userRoute.js";
 const app = express();
 
 app.use(cors());
+let corsOptions = {
+  origin: ["https://spend-smart-frontend.vercel.app/", "http://localhost:5173"],
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
