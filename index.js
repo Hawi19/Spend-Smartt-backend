@@ -9,7 +9,10 @@ const app = express();
 
 app.use(cors());
 let corsOptions = {
-  origin: ["https://spend-smart-frontend.vercel.app/", "http://localhost:5173"],
+  origin: [
+    "https://spend-smart-frontend-ixnl.vercel.app/",
+    "http://localhost:5173",
+  ],
 };
 app.use(cors(corsOptions));
 app.use(express.json());
