@@ -25,9 +25,9 @@ router.post("/", verifyToken, async (req, res) => {
     const expenseAmount = Number(amount);
     const totalIncome = Number(user.totalIncome);
 
-    const currentTotalExpenses = await Expense.find({ userId }).then(
-      (expenses) =>
-        expenses.reduce((total, expense) => total + expense.amount, 0)
+    const currentTotalExpenses = await Expense.find({ userId }).reduce(
+      (total, expense) => total + expense.amount,
+      0
     );
 
     console.log(
@@ -38,18 +38,16 @@ router.post("/", verifyToken, async (req, res) => {
     console.log(`Remaining Income: ${remainingIncome}`);
 
     if (expenseAmount > remainingIncome) {
-      return res
-        .status(400)
-        .json({
-          message: "Cannot create expense: this exceeds your remaining income.",
-        });
+      return res.status(400).json({
+        message: "Cannot create expense: this exceeds your remaining income.",
+      });
     }
 
     const newExpense = new Expense({
       userId,
       category,
       amount: expenseAmount,
-      date: new Date(date), 
+      date: new Date(date),
       description,
     });
     await newExpense.save();
@@ -102,7 +100,9 @@ router.get("/", verifyToken, async (req, res) => {
     console.error("Error fetching expenses:", error.message);
     res.status(500).json({ message: "Server error" });
   }
-});// Get an expense by ID
+});
+
+// Get an expense by ID
 router.get("/:expenseId", verifyToken, async (req, res) => {
   const { expenseId } = req.params;
   const userId = req.user.userId;
@@ -119,7 +119,6 @@ router.get("/:expenseId", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 // Update an expense by ID
 router.put("/:expenseId", verifyToken, async (req, res) => {
@@ -147,9 +146,9 @@ router.put("/:expenseId", verifyToken, async (req, res) => {
     const currentExpenseAmount = updatedExpense.amount;
     const expenseAmount = Number(amount);
 
-    const currentTotalExpenses = await Expense.find({ userId }).then(
-      (expenses) =>
-        expenses.reduce((total, expense) => total + expense.amount, 0)
+    const currentTotalExpenses = await Expense.find({ userId }).reduce(
+      (total, expense) => total + expense.amount,
+      0
     );
 
     const newTotalExpenses =
@@ -160,16 +159,14 @@ router.put("/:expenseId", verifyToken, async (req, res) => {
     );
 
     if (newTotalExpenses > user.totalIncome) {
-      return res
-        .status(400)
-        .json({
-          message: "Cannot update expense: this exceeds your total income.",
-        });
+      return res.status(400).json({
+        message: "Cannot update expense: this exceeds your total income.",
+      });
     }
 
     updatedExpense.category = category;
     updatedExpense.amount = expenseAmount;
-    updatedExpense.date = new Date(date); 
+    updatedExpense.date = new Date(date);
     updatedExpense.description = description;
     await updatedExpense.save();
 
@@ -201,9 +198,9 @@ router.delete("/:expenseId", verifyToken, async (req, res) => {
 
     const user = await User.findById(userId);
     if (user) {
-      const currentTotalExpenses = await Expense.find({ userId }).then(
-        (expenses) =>
-          expenses.reduce((total, expense) => total + expense.amount, 0)
+      const currentTotalExpenses = await Expense.find({ userId }).reduce(
+        (total, expense) => total + expense.amount,
+        0
       );
 
       user.totalExpenses = currentTotalExpenses;

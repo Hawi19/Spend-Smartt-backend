@@ -18,21 +18,25 @@ const userSchema = mongoose.Schema(
     },
     totalIncome: {
       type: Number,
-      default: 0, 
+      default: 0,
     },
     totalExpenses: {
-       type: Number, 
-       default: 0 },
-       
-
-  
-      isVerified: {
+      type: Number,
+      default: 0,
+    },
+    expenses: [
+      {
+        // ADD THIS FIELD
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Expense",
+      },
+    ],
+    isVerified: {
       type: Boolean,
       default: false,
     },
     verificationToken: { type: String },
   },
-
   {
     timestamps: true,
   }
