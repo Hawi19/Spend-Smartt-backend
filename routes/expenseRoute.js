@@ -41,7 +41,7 @@ router.post("/", verifyToken, async (req, res) => {
       return res
         .status(400)
         .json({
-          message: "Cannot create expense: this exceeds your total income.",
+          message: "Cannot create expense: this exceeds your remaining income.",
         });
     }
 
@@ -49,7 +49,7 @@ router.post("/", verifyToken, async (req, res) => {
       userId,
       category,
       amount: expenseAmount,
-      date: new Date(date), // Ensure this is a Date object
+      date: new Date(date), 
       description,
     });
     await newExpense.save();
@@ -169,7 +169,7 @@ router.put("/:expenseId", verifyToken, async (req, res) => {
 
     updatedExpense.category = category;
     updatedExpense.amount = expenseAmount;
-    updatedExpense.date = new Date(date); // Ensure this is a Date object
+    updatedExpense.date = new Date(date); 
     updatedExpense.description = description;
     await updatedExpense.save();
 
