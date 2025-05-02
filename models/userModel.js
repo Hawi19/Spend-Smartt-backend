@@ -24,7 +24,11 @@ const userSchema = mongoose.Schema(
        type: Number, 
        default: 0 },
        
-
+  expenses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Expense",
+    },],
   
       isVerified: {
       type: Boolean,
