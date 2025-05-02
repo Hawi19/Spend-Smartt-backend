@@ -6,83 +6,71 @@ import { verifyToken } from "../authMiddleware.js";
 const router = express.Router();
 
 // Create a new expense
-// Create a new expense
 router.post("/", verifyToken, async (req, res) => {
   const { category, amount, date, description } = req.body;
-  const userId = req.user.userId;
+  const userId = req.user.userId; // Extract userId from the token
 
-  // Validation
   if (!category || !amount || !date) {
-    return res.status(400).json({
-      message: "Category, amount, and date are required."
-    });
+    return res
+      .status(400)
+      .json({ message: "Category, amount, and date are required." });
   }
 
   try {
-    // Find user with session locking
-    const user = await User.findById(userId).session(req.session);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Ensure expenses array exists
-    if (!user.expenses) user.expenses = [];
+    const expenseAmount = Number(amount);
+    const totalIncome = Number(user.totalIncome);
 
-    // Convert and validate amount
-    const expenseAmount = parseFloat(amount);
-    if (isNaN(expenseAmount) || expenseAmount <= 0) {
-      return res.status(400).json({
-        message: "Invalid amount value"
-      });
-    }
+    const currentTotalExpenses = await Expense.find({ userId }).then(
+      (expenses) =>
+        expenses.reduce((total, expense) => total + expense.amount, 0)
+    );
 
-    // Calculate remaining income using stored values
-    const remainingIncome = user.totalIncome - user.totalExpenses;
+    console.log(
+      `Before Creation - Total Expense: ${currentTotalExpenses}, Total Income: ${totalIncome}`
+    );
 
-    // Validate against remaining income
+    const remainingIncome = totalIncome - currentTotalExpenses;
+    console.log(`Remaining Income: ${remainingIncome}`);
+
     if (expenseAmount > remainingIncome) {
-      return res.status(400).json({
-        message: "Expense exceeds remaining income",
-        remainingIncome,
-        currentTotalExpenses: user.totalExpenses
-      });
+      return res
+        .status(400)
+        .json({
+          message: "Cannot create expense: this exceeds your remaining income.",
+        });
     }
 
-    // Create new expense
-    const newExpense = await Expense.create([{
+    const newExpense = new Expense({
       userId,
       category,
       amount: expenseAmount,
-      date: new Date(date),
-      description
-    }], { session: req.session });
+      date: new Date(date), 
+      description,
+    });
+    await newExpense.save();
 
-    // Update user document atomically
-    await User.findByIdAndUpdate(
-      userId,
-      {
-        $push: { expenses: newExpense[0]._id },
-        $inc: { totalExpenses: expenseAmount }
-      },
-      { session: req.session }
+    user.expenses.push(newExpense._id);
+    user.totalExpenses = currentTotalExpenses + expenseAmount;
+    await user.save();
+
+    const newRemainingIncome = totalIncome - user.totalExpenses;
+    console.log(
+      `After Creation - Total Expenses: ${user.totalExpenses}, New Remaining Income: ${newRemainingIncome}`
     );
-
-    // Commit transaction
-    await req.session.commitTransaction();
 
     return res.status(201).json({
       message: "Expense created successfully",
-      expense: newExpense[0],
-      remainingIncome: user.totalIncome - (user.totalExpenses + expenseAmount)
+      expense: newExpense,
+      remainingIncome: newRemainingIncome,
     });
-
   } catch (error) {
-    await req.session.abortTransaction();
     console.error("Error creating expense:", error.message);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message
-    });
+    res.status(500).json({ message: "Server error" });
   }
 });
 

@@ -18,19 +18,21 @@ const userSchema = mongoose.Schema(
     },
     totalIncome: {
       type: Number,
-      default: 0, 
+      default: 0,
     },
     totalExpenses: {
-       type: Number, 
-       default: 0 },
-       
-  expenses: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Expense",
-    },],
-  
-      isVerified: {
+      type: Number,
+      default: 0,
+    },
+    expenses: [
+     
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Expense",
+      },
+    ],
+
+    isVerified: {
       type: Boolean,
       default: false,
     },
