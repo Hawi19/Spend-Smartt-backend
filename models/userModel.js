@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-
 const userSchema = mongoose.Schema(
   {
     username: {
@@ -24,13 +22,15 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    expenses: [
-      {
-        // ADD THIS FIELD
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Expense",
-      },
-    ],
+    expenses: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Expense",
+        },
+      ],
+      default: [],
+    },
     isVerified: {
       type: Boolean,
       default: false,
@@ -41,5 +41,3 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-
-export const User = mongoose.model("User", userSchema);
