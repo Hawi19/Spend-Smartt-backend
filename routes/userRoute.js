@@ -49,7 +49,6 @@ router.post("/signup", async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
-
 // Email Verification
 router.get("/verify", async (req, res) => {
   try {
@@ -84,7 +83,7 @@ router.get("/verify", async (req, res) => {
     console.log("User verified status after saving:", user.isVerified); // Should log true
     res.status(200).json({ message: "Email verified successfully" });
   } catch (error) {
-    console.error("Verification error:", error.message);
+    console.error("Verification error:", error); // Log entire error for debugging
     return res.status(400).json({ message: "Invalid or expired token" });
   }
 });
