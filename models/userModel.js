@@ -25,20 +25,27 @@ const userSchema = mongoose.Schema(
       default: 0,
     },
     expenses: [
-     
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Expense",
       },
     ],
-
     isVerified: {
       type: Boolean,
       default: false,
     },
-    verificationToken: { type: String },
+    verificationToken: {
+      type: String,
+    },
+    resetCode: {
+      type: String,
+      default: null,
+    },
+    resetCodeExpiration: {
+      type: Date,
+      default: null,
+    },
   },
-
   {
     timestamps: true,
   }
