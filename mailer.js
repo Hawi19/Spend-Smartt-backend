@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 // Function to send verification email
 export const sendVerificationEmail = async (email, token) => {
-  const verificationLink = `http://localhost:5173/verify?token=${token}`;
+  const verificationLink = `https://spend-smart-frontend-cpad.vercel.app/verify?token=${token}`;
 
   const mailOptions = {
     from: "hawigirma1996@gmail.com",
